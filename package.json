@@ -1,0 +1,30 @@
+{
+  "name": "notes-api",
+  "version": "1.0.0",
+  "description": "This is a Notes API project that allows users to create, edit and manage notes, as well as create accounts and log in. It was developed as an exam assignment for a back-end fundamentals course.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js",
+    "start:prod": "NODE_ENV=production nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joakimtrulsson/Notes-api.git"
+  },
+  "author": "Joakim Trulsson",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joakimtrulsson/Notes-api/issues"
+  },
+  "homepage": "https://github.com/joakimtrulsson/Notes-api#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^7.0.4",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.22"
+  }
+}
