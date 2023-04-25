@@ -3,10 +3,11 @@ const AppError = require('../utils/AppError');
 
 exports.getOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    let query = Model.findById(req.params.id);
+    let doc = await Model.findById(req.params.id);
+    console.log(doc);
 
     if (!doc) {
-      return next(new AppError('Inget dokument hittades.'));
+      return next(new AppError('Inget dokument hittades.', 404));
     }
 
     res.status(200).json({
@@ -17,9 +18,27 @@ exports.getOne = (Model) =>
     });
   });
 
+exports.findAll = (Model) =>
+  catchAsync(async (req, res, next) => {
+    const allDocs = await Model.find({ user: req.user._id });
+
+    res.status(200).json({
+      status: 'success',
+      results: allDocs.length,
+      data: {
+        allDocs,
+      },
+    });
+  });
+
 exports.getAll = (Model) =>
   catchAsync(async (req, res, next) => {
-    const allDocs = await Model.Find({ user: req.user._id });
+    const { title } = req.params;
+    const filter = title
+      ? { user: req.user._id, title: { $regex: title, $options: 'i' } }
+      : { user: req.user._id };
+
+    const allDocs = await Model.find(filter);
 
     res.status(200).json({
       status: 'success',
@@ -32,7 +51,7 @@ exports.getAll = (Model) =>
 
 exports.createOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    const newDoc = await Model.create(req.body);
+    const newDoc = await Model.create({ user: req.user._id, ...req.body });
 
     res.status(201).json({ status: 'success', data: newDoc });
   });
@@ -45,7 +64,7 @@ exports.updateOne = (Model) =>
     });
 
     if (!updatedDoc) {
-      return next(new AppError('No Document found with that ID.', 404));
+      return next(new AppError('Inget dokument hittades.', 404));
     }
 
     res.status(200).json({
@@ -61,10 +80,10 @@ exports.deleteOne = (Model) =>
     const deletedDoc = await Model.findByIdAndDelete(req.params.id);
 
     if (!deletedDoc) {
-      return next(new AppError('No document found with that id.', 404));
+      return next(new AppError('Inget dokument hittades.', 404));
     }
     res.status(200).json({
       status: 'success',
-      message: 'Document deleted',
+      message: 'Dokumentet raderat.',
     });
   });

@@ -11,6 +11,7 @@ const UserSchema = mongoose.Schema(
     username: {
       type: String,
       required: [true, 'En användare måste ha en användarnamn.'],
+      lowercase: true,
       unique: [true, 'Användarnamnet är upptaget'],
     },
     password: {
@@ -37,7 +38,6 @@ const UserSchema = mongoose.Schema(
 );
 
 UserSchema.pre('save', async function (next) {
-  // Kör bara den här funktionen om lösenordet är nytt eller uppdaterat.
   this.password = await bcrypt.hash(this.password, 12);
 
   this.passwordConfirm = undefined;
