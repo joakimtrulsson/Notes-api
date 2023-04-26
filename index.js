@@ -4,8 +4,8 @@ const dotenv = require('dotenv');
 dotenv.config({ path: './config.env' });
 
 process.on('uncaughtException', (err) => {
-  console.log('Uncaught exception. Shutting down.');
-  // console.log(err.name, err.message);
+  console.log('Något gick fel i koden. Stänger ner.');
+
   process.exit(1);
 });
 
@@ -34,7 +34,7 @@ const server = app.listen(port, () => {
 });
 
 process.on('unhandledRejection', (err) => {
-  console.log('Något gick snett. Stänger servern.');
+  console.log('Något gick snett med att hämta data. Stänger servern.');
   console.log(err.name, err.message);
   server.close(() => {
     process.exit(1);

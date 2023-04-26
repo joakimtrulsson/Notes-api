@@ -1,0 +1,382 @@
+openapi: 3.0.0
+servers:
+  - url: http://localhost:8000/api
+info:
+  description: This is a Notes API project that allows users to create, edit and manage notes, as well as create accounts and log in. It was developed as an exam assignment for a back-end fundamentals course.
+  version: '1.0.0'
+  title: Notes API
+  contact:
+    email: joakim.trulsson@icloud.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: Användare
+    description: Tillgängligt för ej inloggade användare.
+  - name: Notes
+    description: Tillgängligt för inloggade användare.
+paths:
+  /user/signup:
+    post:
+      tags:
+        - Användare
+      summary: Skapa en användare
+      description: |
+        Skapar en användare
+      requestBody:
+        description: Användaruppgifter
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Skapar en användare.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+        '400':
+          description: 'Duplicerat värde: "John Doe". Ange ett annat värde.'
+
+  /user/login:
+    post:
+      tags:
+        - Användare
+      summary: Loggar in en användare
+      description: |
+        Skapar en användare
+      requestBody:
+        description: Användaruppgifter
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              required:
+                - username
+                - password
+      responses:
+        '200':
+          description: Loggar in en användare.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Statusen för begäran.
+                  token:
+                    type: string
+                    description: Ett JWT-autentiserings-token för att använda andra API-ändpunkter.
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        type: object
+                        properties:
+                          username:
+                            type: string
+                          name:
+                            type: string
+
+        '401':
+          description: 'Ogiltigt användarnamn eller lösenord.'
+
+  /notes/:
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - Notes
+      summary: Skapa en anteckning
+      description: |
+        Skapa en anteckning
+      requestBody:
+        description: Anteckning
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                text:
+                  type: string
+              required:
+                - title
+                - text
+      responses:
+        '200':
+          description: Skapar en anteckning.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Statusen för begäran.
+                  data:
+                    $ref: '#/components/schemas/Note'
+        '400':
+          description: 'Ogiltig input. En anteckning måste innehålla en text och titel.'
+        '401':
+          description: 'Ogiltigt token. Vänligen logga in igen.'
+
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - Notes
+      summary: Hämta alla anteckingar
+      description: |
+        Hämtar alla anteckningar
+
+      responses:
+        '200':
+          description: Hämta alla anteckningar
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Statusen för begäran.
+                  results:
+                    type: number
+                    default: 1
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Note'
+        '401':
+          description: 'Ogiltigt token. Vänligen logga in igen.'
+
+  /notes/{id}:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - Notes
+      summary: Hämta en anteckning
+      description: |
+        Hämta en anteckning
+      parameters:
+        - in: path
+          name: id
+          description: ID:t för den anteckning som ska hämtas.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Hämtar en anteckning.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Statusen för begäran.
+                  data:
+                    $ref: '#/components/schemas/Note'
+        '404':
+          description: 'Inget dokument hittades.'
+        '401':
+          description: 'Ogiltigt token. Vänligen logga in igen.'
+
+    patch:
+      security:
+        - bearerAuth: []
+      tags:
+        - Notes
+      summary: Uppdatera en anteckning
+      description: |
+        Uppdatera en anteckning
+      parameters:
+        - in: path
+          name: id
+          description: ID:t för den anteckning som ska uppdateras.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Antingen title eller text, eller både title och text.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                text:
+                  type: string
+              required:
+                - username
+                - password
+      responses:
+        '200':
+          description: Uppdatera en anteckning.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Statusen för begäran.
+                  data:
+                    $ref: '#/components/schemas/Note'
+        '400':
+          description: 'Ogiltig input'
+        '404':
+          description: 'Inget dokument hittades.'
+        '401':
+          description: 'Ogiltigt token. Vänligen logga in igen.'
+
+    delete:
+      security:
+        - bearerAuth: []
+      tags:
+        - Notes
+      summary: Ta bort en anteckning
+      description: |
+        Ta bort en anteckning
+      parameters:
+        - in: path
+          name: id
+          description: ID:t för den anteckning som ska tas bort.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Tar bort en anteckning.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Statusen för begäran.
+                  message:
+                    type: string
+        '404':
+          description: 'Inget dokument hittades.'
+        '401':
+          description: 'Ogiltigt token. Vänligen logga in igen.'
+
+  /notes/search/{title}:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - Notes
+      summary: Sök efter anteckningar
+      description: |
+        Hämta en anteckning
+      parameters:
+        - in: path
+          name: title
+          description: Sök efter titlar som matchar sökningen.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Sök efter anteckningar
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Statusen för begäran.
+                  results:
+                    type: number
+                    default: 1
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Note'
+        '400':
+          description: 'Ogiltig sökning.'
+        '401':
+          description: 'Ogiltigt token. Vänligen logga in igen.'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Note:
+      type: object
+      required:
+        - title
+        - text
+        - user
+      properties:
+        id:
+          type: string
+          format: ObjectId
+          description: Unikt ID för anteckningen som genereras automatiskt av MongoDB.
+        title:
+          type: string
+          example: Todo1
+        text:
+          type: string
+          example: 'I need to fix...'
+        createdAt:
+          type: string
+          format: date-time
+          example: '2022-05-03T14:35:00Z'
+        modifiedAt:
+          type: string
+          format: date-time
+          example: '2022-05-03T14:35:00Z'
+    User:
+      required:
+        - name
+        - username
+        - password
+        - passwordConfirm
+      properties:
+        id:
+          type: string
+          format: ObjectId
+          description: Unikt ID för användaren som genereras automatiskt av MongoDB.
+        name:
+          type: string
+          example: John Doe
+        username:
+          type: string
+          format: lowercase
+          example: johndoe
+        password:
+          type: string
+          example: pass1234
+        passwordConfirm:
+          type: string
+          example: pass1234
+      type: object

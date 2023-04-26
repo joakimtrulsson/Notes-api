@@ -26,6 +26,8 @@
     "mongoose": "^7.0.4",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.22",
-    "validator": "^13.9.0"
+    "swagger-ui-express": "^4.6.2",
+    "validator": "^13.9.0",
+    "yamljs": "^0.3.0"
   }
 }

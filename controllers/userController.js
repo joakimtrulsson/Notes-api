@@ -36,7 +36,6 @@ exports.signup = catchAsync(async (req, res, next) => {
 
 exports.login = catchAsync(async (req, res, next) => {
   const { username, password } = req.body;
-  console.log(username);
 
   if (!username || !password) {
     return next(new AppError('Vänligen ange användarnamn och lösenord..', 400));
@@ -50,11 +49,6 @@ exports.login = catchAsync(async (req, res, next) => {
 
   createSendToken(user, 200, req, res);
 });
-
-exports.logout = (req, res) => {
-  // Ogiltigförklara token här!
-  res.status(200).json({ status: 'success' });
-};
 
 exports.protect = catchAsync(async (req, res, next) => {
   let token;

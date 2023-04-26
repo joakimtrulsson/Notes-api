@@ -7,7 +7,6 @@ const handleCastErrorDB = (err) => {
 
 const handleDuplicateFieldsDB = (err) => {
   const value = err.errmsg.match(/(["'])(\\?.)*?\1/)[0];
-  console.log(value);
 
   const message = `Duplicerat värde: ${value}. Ange ett annat värde.`;
   return new AppError(message, 400);
@@ -23,7 +22,7 @@ const handleValidationErrorDB = (err) => {
 const handleJWTError = () => new AppError('Ogiltigt token. Vänligen logga in igen.', 401);
 const handleJWTExpired = () => new AppError('Token har gått ut. Vänligen logga in igen.', 401);
 
-const sendErrorDev = (err, req, res) => {
+const sendError = (err, req, res) => {
   res.status(err.statusCode).json({
     status: err.status,
     error: err,
@@ -42,5 +41,5 @@ module.exports = (err, req, res, next) => {
   if (err.name === 'JsonWebTokenError') err = handleJWTError();
   if (err.name === 'TokenExpiredError') err = handleJWTExpired();
 
-  sendErrorDev(err, req, res);
+  sendError(err, req, res);
 };

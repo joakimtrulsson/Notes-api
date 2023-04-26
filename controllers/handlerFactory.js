@@ -1,10 +1,10 @@
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/AppError');
+const validateRequestBody = require('../utils/validateRequestBody');
 
 exports.getOne = (Model) =>
   catchAsync(async (req, res, next) => {
     let doc = await Model.findById(req.params.id);
-    console.log(doc);
 
     if (!doc) {
       return next(new AppError('Inget dokument hittades.', 404));
@@ -58,6 +58,10 @@ exports.createOne = (Model) =>
 
 exports.updateOne = (Model) =>
   catchAsync(async (req, res, next) => {
+    if (!validateRequestBody(req.body)) {
+      return next(new AppError('Ogiltig input.', 400));
+    }
+
     const updatedDoc = await Model.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,

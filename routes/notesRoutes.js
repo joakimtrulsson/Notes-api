@@ -15,6 +15,5 @@ router
   .delete(notesController.deleteNote);
 
 router.route('/search/:title').get(notesController.getAllNotes);
-// router.route('/search/:title').get(notesController.findAllNotes);
 
 module.exports = router;
