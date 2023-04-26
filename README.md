@@ -1,6 +1,6 @@
 # Notes-api
 
-Det här är ett projekt för Notes API som tillåter användare att skapa, redigera och hantera anteckningar, samt skapa konton och logga in. Den utvecklades som en examinationssuppgift i kursen Backend-grunder.
+Det här är Notes API som tillåter användare att skapa, redigera och hantera anteckningar, samt skapa konton och logga in. Den utvecklades som en examinationssuppgift i kursen Backend-grunder.
 
 - https://gist.github.com/zocom-christoffer-wallenberg/baeea0150ee8af6b5f855f80d2f8ca75
 
